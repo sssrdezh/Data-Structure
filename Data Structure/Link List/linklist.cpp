@@ -1,4 +1,7 @@
 #include "linklist.h" 
+
+
+
 /*
  * 创建链表--头插法
  * 1.声明一个结点p和计数器变量i；
@@ -11,18 +14,39 @@
 */
 void CreateListHead(LinkList *L, int n)
 {
-	LinkList p;
+	LinkList p,r;
 	srand(unsigned(time(0)));
 	*L = (LinkList)malloc(sizeof(Node));
 	(*L)->data = NULL;
 	(*L)->next = nullptr;
+	r = *L;
 	for (int i = 0; i < n; i++)
 	{
 		p = (LinkList)malloc(sizeof(Node));
 		p->data = rand() % 100 + 1;
-		p->next = (*L)->next;
-		(*L)->next = p;
+		p->next = r->next;
+		r->next = p;
 
+	}
+}
+/*
+ * 创建链表--尾插法
+*/
+void CreateListTail(LinkList *L, int n)
+{
+	LinkList p,r;
+	srand(unsigned(time(0)));
+	*L = (LinkList)malloc(sizeof(Node));
+	(*L)->data = NULL;
+	(*L)->next = nullptr;
+	r = *L;
+	for (int i = 0; i < n; i++)
+	{
+		p = (LinkList)malloc(sizeof(Node));
+		p->data = rand() % 100 + 1;
+		p->next = nullptr;
+		r->next = p;
+		r = r->next;
 	}
 }
 /*
@@ -46,5 +70,58 @@ Status GetElem(LinkList L, int i, ElemType *e)
 	if (!p || j > i)
 		return ERROR;
 	*e = p->data;
+	return OK;
+}
+/*单链表插入结点*/
+Status ListInsert(LinkList *L, int i, ElemType e)
+{
+	int j;
+	LinkList p,s;
+	p = (*L)->next;
+	j = 1;
+	while (p && j < i)
+	{
+		p = p->next;
+		++j;
+	}
+	if (!p || j > i)
+		return ERROR;
+	s = (LinkList)malloc(sizeof(Node));
+	s->data = e;
+	s->next = p->next;
+	p->next = s;
+	return OK;
+}
+Status ListDelete(LinkList *L, int i, ElemType *e)
+{
+	int j;
+	LinkList p,q;
+	p = *L;
+	j = 1;
+	while (p->next && j < i)
+	{
+		p = p->next;
+		++j;
+	}
+	if (!(p->next) || j > i)
+		return ERROR;
+	q = p->next;
+	p->next = q->next;
+	*e = q->data;
+	free(q);
+	return OK;
+}
+Status ClearList(LinkList *L)
+{
+	LinkList p, q;
+	p = (*L)->next;
+	while (p->next)
+	{
+		q = p->next;
+		free(p);
+		p = q;
+	}
+	free(p);
+	(*L)->next = nullptr;
 	return OK;
 }
